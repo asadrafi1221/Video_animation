@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+
+body {
+  background:linear-gradient(black,red,black);
+  font-family: "Space Grotesk", sans-serif;
+}
+.text-animation{
+    font-family: "Pirata One", system-ui;
+    font-weight: lighter;
+    font-style: normal;
+    text-shadow: 1px 3px 9px rgb(148, 142, 142);
+
+}
+.border{
+  border:2px solid red;
+}
+*{
+  padding: 0;
+  margin: 0;
+}
+@tailwind utilities;
