@@ -8,17 +8,24 @@ export default function App() {
   const containerRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
-  // Resize canvas based on window size
+  // Ensure canvas always fills the screen
   useEffect(() => {
-    const handleResize = () => {
+    const updateCanvasSize = () => {
       setCanvasSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
+      const canvas = canvasRef.current;
+      if (canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    updateCanvasSize(); // Initial setting
+    window.addEventListener("resize", updateCanvasSize); // Handle resizing
+
+    return () => window.removeEventListener("resize", updateCanvasSize);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -33,22 +40,23 @@ export default function App() {
       duration: 1.5,
       opacity: 0,
     })
-    .from(".text-animation", {
-      y: -88,
-      duration: 1.3,
-      opacity: 0,
-      ease: "bounce",
-    })
-    .from(".text-div h1", {
-      x: -88,
-      opacity: 0,
-      ease: "bounce",
-      stagger: 0.5,
-    }).from(".text-div p", {
-      y: -99,
-      opacity: 0,
-      ease: "bounce",
-    });
+      .from(".text-animation", {
+        y: -88,
+        duration: 1.3,
+        opacity: 0,
+        ease: "bounce",
+      })
+      .from(".text-div h1", {
+        x: -88,
+        opacity: 0,
+        ease: "bounce",
+        stagger: 0.5,
+      })
+      .from(".text-div p", {
+        y: -99,
+        opacity: 0,
+        ease: "bounce",
+      });
   }, []);
 
   const images = useMemo(() => {
@@ -102,12 +110,13 @@ export default function App() {
 
           let drawWidth, drawHeight;
 
+          // Adjusting to always fill the canvas, cropping sides as needed
           if (imgRatio > canvasRatio) {
-            drawWidth = canvasWidth;
-            drawHeight = canvasWidth / imgRatio;
-          } else {
             drawHeight = canvasHeight;
-            drawWidth = canvasHeight * imgRatio;
+            drawWidth = drawHeight * imgRatio;
+          } else {
+            drawWidth = canvasWidth;
+            drawHeight = drawWidth / imgRatio;
           }
 
           const xOffset = (canvasWidth - drawWidth) / 2;
@@ -127,22 +136,22 @@ export default function App() {
     animate(0, 1, {
       duration: 0.2,
       onUpdate: (t) => {
-        const smoothIndex = lerp(start, latest, t); 
-        render(smoothIndex); 
+        const smoothIndex = lerp(start, latest, t);
+        render(smoothIndex);
       },
     });
   });
 
   return (
     <>
-      <div className="text-white text-[65vh] absolute z-[-1] top-0 left-10 text-animation">
+      <div className="text-white text-[10vw] absolute z-[-1] top-0 left-10 text-animation">
         Cristiano
       </div>
       <div className="relative z-30 bg-transparent flex flex-col justify-end items-center h-[100vh]">
         <img
           src="../Ronaldo-removebg-preview (1).png"
           alt="Cristiano Ronaldo"
-          className="h-[95vh] w-[50%] object-cover"
+          className="h-[80vh] w-[50vw] object-cover"
         />
       </div>
       <div className="fixed text-white bottom-[10%] flex items-center justify-center w-[100vw] z-50">
@@ -155,9 +164,9 @@ export default function App() {
         </div>
       </div>
       <div className="h-[100vh] text-white p-10 backdrop-blur-xl text-div">
-        <h1 className="text-[20vh]">Amazing Dev</h1>
-        <h1 className="text-[20vh]">With</h1>
-        <p className="text-[10vh] text-red-400">Watch some Magic</p>
+        <h1 className="text-[10vw]">Amazing Dev</h1>
+        <h1 className="text-[10vw]">With</h1>
+        <p className="text-[5vw] text-red-400">Watch some Magic</p>
       </div>
 
       <div
@@ -170,13 +179,11 @@ export default function App() {
       >
         {/* Full Screen Responsive Canvas */}
         <canvas
-          width={canvasSize.width}
-          height={canvasSize.height}
           style={{
-            position: "sticky", 
+            position: "sticky",
             top: 0,
-            width: "100vw", 
-            height: "100vh", 
+            width: "100vw", // Always fills the width of the viewport
+            height: "100vh", // Always fills the height of the viewport
             background: "black",
           }}
           ref={canvasRef}
@@ -185,7 +192,7 @@ export default function App() {
         <div style={{ height: "100vh" }}></div>
       </div>
 
-      <div className="h-[100vh] text-[30vh] text-red-600 relative left-20">
+      <div className="h-[100vh] text-[10vw] text-red-600 relative left-20">
         <h1>Hope you like</h1>
       </div>
     </>
